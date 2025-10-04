@@ -11,13 +11,11 @@ import (
 )
 
 func ConnectDatabase() *gorm.DB {
-	var dsn string
+	// Ambil dari env
+	dsn := os.Getenv("DATABASE_URL")
 
-	// Railway / production pakai DATABASE_URL
-	if os.Getenv("DATABASE_URL") != "" {
-		dsn = os.Getenv("DATABASE_URL")
-	} else {
-		// Local pakai variabel env manual
+	if dsn == "" {
+		// fallback kalau di local pakai manual
 		dbUser := os.Getenv("DB_USER")
 		dbPass := os.Getenv("DB_PASS")
 		dbHost := os.Getenv("DB_HOST")
@@ -33,7 +31,7 @@ func ConnectDatabase() *gorm.DB {
 		log.Fatal("Failed to connect to DB: ", err)
 	}
 
-	// Auto migrate semua tabel
+	// Auto migrate
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.Category{},
@@ -48,5 +46,4 @@ func ConnectDatabase() *gorm.DB {
 	fmt.Println("✅ Database migrated successfully!")
 	return db
 }
-
 
