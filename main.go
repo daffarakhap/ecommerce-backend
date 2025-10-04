@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Connect DB
-	db := config.ConnectDatabase()
+	db := configs.ConnectDatabase()
 	log.Println("✅ Database connected!")
 
 	// Jalankan seeder kalau perlu
