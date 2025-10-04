@@ -1,4 +1,4 @@
-package config
+package configs
 
 import (
 	"ecommerce-backend/models"
@@ -11,27 +11,24 @@ import (
 )
 
 func ConnectDatabase() *gorm.DB {
-	// Ambil dari env
-	dsn := os.Getenv("DATABASE_URL")
+	// Ambil dari ENV
+	user := os.Getenv("MYSQLUSER")
+	pass := os.Getenv("MYSQLPASSWORD")
+	host := os.Getenv("MYSQLHOST")
+	port := os.Getenv("MYSQLPORT")
+	dbname := os.Getenv("MYSQLDATABASE")
 
-	if dsn == "" {
-		// fallback kalau di local pakai manual
-		dbUser := os.Getenv("DB_USER")
-		dbPass := os.Getenv("DB_PASS")
-		dbHost := os.Getenv("DB_HOST")
-		dbPort := os.Getenv("DB_PORT")
-		dbName := os.Getenv("DB_NAME")
+	// Buat DSN MySQL
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		user, pass, host, port, dbname)
 
-		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-			dbUser, dbPass, dbHost, dbPort, dbName)
-	}
-
+	// Connect ke DB
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to DB: ", err)
+		log.Fatal("❌ Failed to connect to DB:", err)
 	}
 
-	// Auto migrate
+	// Auto migrate tabel
 	err = db.AutoMigrate(
 		&models.User{},
 		&models.Category{},
@@ -40,10 +37,11 @@ func ConnectDatabase() *gorm.DB {
 		&models.OrderItem{},
 	)
 	if err != nil {
-		log.Fatal("Failed to migrate DB: ", err)
+		log.Fatal("❌ Failed to migrate DB:", err)
 	}
 
 	fmt.Println("✅ Database migrated successfully!")
 	return db
 }
+
 
