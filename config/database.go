@@ -1,8 +1,6 @@
-package configs
+package config
 
 import (
-	"ecommerce-backend/models"
-	"fmt"
 	"log"
 	"os"
 
@@ -10,38 +8,24 @@ import (
 	"gorm.io/gorm"
 )
 
+var DB *gorm.DB
+
 func ConnectDatabase() *gorm.DB {
-	// Ambil dari ENV
-	user := os.Getenv("MYSQLUSER")
-	pass := os.Getenv("MYSQLPASSWORD")
-	host := os.Getenv("MYSQLHOST")
-	port := os.Getenv("MYSQLPORT")
-	dbname := os.Getenv("MYSQLDATABASE")
+	// Railway otomatis kasih MYSQL_URL di Variables
+	dsn := os.Getenv("MYSQL_URL")
+	if dsn == "" {
+		log.Fatal("❌ MYSQL_URL not set in environment variables")
+	}
 
-	// Buat DSN MySQL
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		user, pass, host, port, dbname)
-
-	// Connect ke DB
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("❌ Failed to connect to DB:", err)
 	}
 
-	// Auto migrate tabel
-	err = db.AutoMigrate(
-		&models.User{},
-		&models.Category{},
-		&models.Product{},
-		&models.Order{},
-		&models.OrderItem{},
-	)
-	if err != nil {
-		log.Fatal("❌ Failed to migrate DB:", err)
-	}
-
-	fmt.Println("✅ Database migrated successfully!")
+	log.Println("✅ Successfully connected to DB!")
+	DB = db
 	return db
 }
+
 
 
