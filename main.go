@@ -3,6 +3,7 @@ package main
 import (
 	"ecommerce-backend/config"
 	"ecommerce-backend/routes"
+	"ecommerce-backend/seeders"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,10 @@ func main() {
 
 	// Migrate DB
 	config.MigrateDatabase(db)
+
+
+	//Seeder Data
+	seeders.Seed1(db)
 
 	// Init Router
 	r := gin.Default()
