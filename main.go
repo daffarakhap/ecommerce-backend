@@ -18,7 +18,7 @@ func main() {
 
 
 	//Seeder Data
-	seeders.Seed1(db)
+	seeders.Seed(db)
 
 	// Init Router
 	r := gin.Default()
