@@ -1,6 +1,5 @@
 # 🛒 E-Commerce API (Golang + Gin + MySQL)
-
-### 👨‍💻 Developer: Pawit  
+ 
 Membangun backend sederhana untuk sistem e-commerce dengan fitur autentikasi, produk, kategori, dan pesanan.
 
 ---
